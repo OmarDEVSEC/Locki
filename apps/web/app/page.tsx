@@ -79,9 +79,12 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-zinc-50 px-4 py-16">
+    <div className="flex min-h-screen flex-col items-center bg-gradient-to-b from-indigo-50 via-white to-white px-4 py-16">
       <div className="w-full max-w-md text-center">
-        <h1 className="text-2xl font-bold text-zinc-900">Locki</h1>
+        <div className="flex items-center justify-center gap-2">
+          <span className="text-2xl">🔒</span>
+          <h1 className="text-2xl font-bold text-zinc-900">Locki</h1>
+        </div>
         <p className="mt-1 text-sm text-zinc-600">
           Check a site&apos;s trustworthiness before you proceed.
         </p>
@@ -93,12 +96,12 @@ export default function Home() {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="e.g. example.com"
-            className="h-11 flex-1 rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900 placeholder-zinc-400 outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+            className="h-11 flex-1 rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900 placeholder-zinc-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
           />
           <button
             type="submit"
             disabled={loading}
-            className="h-11 min-w-24 rounded-lg bg-zinc-900 px-5 text-sm font-semibold text-white disabled:bg-zinc-400"
+            className="h-11 min-w-24 rounded-lg bg-indigo-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:bg-zinc-400"
           >
             {loading ? "Checking…" : "Check"}
           </button>
@@ -112,7 +115,7 @@ export default function Home() {
           Try{" "}
           <button
             type="button"
-            className="underline underline-offset-2"
+            className="text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
             onClick={() => setUrl("quick-cash-loans.test")}
           >
             quick-cash-loans.test
@@ -128,7 +131,13 @@ export default function Home() {
       </div>
 
       {result && (
-        <div className="mt-8 flex flex-col items-center">
+        // Keyed by scan time so a repeat check on a new site fully
+        // remounts the badge/face and replays its reveal animation
+        // instead of silently patching props on the existing DOM node.
+        <div
+          key={result.domain + result.scannedAt}
+          className="mt-8 flex flex-col items-center"
+        >
           <LockBadge
             rating={result.rating}
             open={open}

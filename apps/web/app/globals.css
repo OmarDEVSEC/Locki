@@ -58,6 +58,29 @@ body {
   }
 }
 
+@keyframes face-blink {
+  0% {
+    transform: scaleY(0.1);
+  }
+  60% {
+    transform: scaleY(1.15);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes mouth-reveal {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .lock-badge-enter {
     animation: lock-snap-in 300ms ease-out;
@@ -71,12 +94,24 @@ body {
   .lock-shackle {
     transition: transform 200ms ease-out;
   }
+  .face-eyes-enter {
+    animation: face-blink 200ms ease-out 200ms both;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .face-mouth-enter {
+    animation: mouth-reveal 200ms ease-out 320ms both;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .lock-badge-enter,
   .lock-badge-pulse,
-  .rating-panel-enter {
+  .rating-panel-enter,
+  .face-eyes-enter,
+  .face-mouth-enter {
     animation: none !important;
   }
   .lock-shackle {
