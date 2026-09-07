@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes lock-snap-in {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes lock-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes panel-slide-fade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lock-badge-enter {
+    animation: lock-snap-in 300ms ease-out;
+  }
+  .lock-badge-pulse {
+    animation: lock-pulse 1.2s ease-in-out 2;
+  }
+  .rating-panel-enter {
+    animation: panel-slide-fade 250ms ease-out;
+  }
+  .lock-shackle {
+    transition: transform 200ms ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lock-badge-enter,
+  .lock-badge-pulse,
+  .rating-panel-enter {
+    animation: none !important;
+  }
+  .lock-shackle {
+    transition: none !important;
+  }
+}
+
+.lock-shackle-open {
+  transform: rotate(-35deg) translateY(-1px);
+}
+
+.lock-badge-hover {
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
+}
+.lock-badge-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
