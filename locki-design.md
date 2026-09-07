@@ -96,6 +96,22 @@ Override: 3+ verified scam reports forces 🔴 regardless of other scores.
 - No flashing >3Hz (seizure-safety baseline regardless of reduced-motion setting).
 - Color is never the *only* signal — pair every color state with an icon shape change (closed lock/half-open/open) and text label, for colorblind accessibility.
 
+### 4.5 Applied Laws of UX
+
+Concrete decisions in the lookup site (`apps/web`), mapped to the psychology principle driving them — recorded here so the reasoning survives past the commit that made the change:
+
+| Change | Law |
+|---|---|
+| Input auto-focused on load; accepts pasted full URLs, extra whitespace, missing scheme | Jakob's Law, Postel's Law |
+| Badge and buttons sized to a 44px-minimum touch target | Fitts's Law |
+| "Checking security… / ToS… / community…" cycles during a scan instead of a static spinner | Doherty Threshold, Goal-Gradient Effect |
+| Each panel section (ToS/community/security) wrapped in its own bounded card | Law of Common Region, Law of Proximity |
+| Headline rating kept largest and first in the panel | Pareto Principle, Serial Position Effect |
+| Interface stays a single input + button, no added settings | Hick's Law, Occam's Razor |
+| Error states styled as a calm bordered card, not raw red text | Peak-End Rule |
+
+Not forced: Parkinson's Law and the Zeigarnik Effect don't meaningfully apply to a single-shot lookup (no open-ended task to expand, and the "report submitted" state already closes the loop rather than leaving it dangling).
+
 ---
 
 ## 5. Open Design Questions

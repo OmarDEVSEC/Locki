@@ -22,8 +22,8 @@ export function LockIcon({ rating, open, className }: LockIconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
-      width="28"
-      height="28"
+      width="32"
+      height="32"
       className={className}
       role="img"
       aria-label={`${rating.replace("_", " ")} rating`}
@@ -33,11 +33,11 @@ export function LockIcon({ rating, open, className }: LockIconProps) {
           d="M8 10V7a4 4 0 0 1 8 0v3"
           fill="none"
           stroke={color}
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
         />
       </g>
-      <rect x="5" y="10" width="14" height="10" rx="2" fill={color} />
+      <rect x="5" y="10" width="14" height="10" rx="2.5" fill={color} />
     </svg>
   );
 }

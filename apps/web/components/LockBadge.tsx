@@ -29,7 +29,7 @@ export function LockBadge({ rating, open, onToggle }: LockBadgeProps) {
     <button
       type="button"
       onClick={onToggle}
-      className={`lock-badge-hover flex items-center gap-2 rounded-full border-2 px-4 py-2 ${RATING_BG[rating]}`}
+      className={`lock-badge-hover flex h-11 items-center gap-2 rounded-full border-2 px-5 ${RATING_BG[rating]}`}
       aria-expanded={open}
     >
       <span
@@ -39,7 +39,7 @@ export function LockBadge({ rating, open, onToggle }: LockBadgeProps) {
       >
         <LockIcon rating={rating} open={open} />
       </span>
-      <span className="text-sm font-semibold text-zinc-800">
+      <span className="text-base font-semibold text-zinc-800">
         {RATING_LABEL[rating]}
       </span>
     </button>

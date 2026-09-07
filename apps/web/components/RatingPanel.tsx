@@ -35,60 +35,71 @@ function tosSummaryLine(result: ScanResult): string {
   return "";
 }
 
+// Each section gets its own bounded card (Law of Common Region) with
+// consistent internal spacing (Law of Proximity), so the three signal
+// types read as distinct groups instead of one undifferentiated block.
+function Section({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mt-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3">
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+        {label}
+      </p>
+      <div className="mt-1 text-sm text-zinc-700">{children}</div>
+    </div>
+  );
+}
+
 export function RatingPanel({ result }: { result: ScanResult }) {
   const [reported, setReported] = useState(false);
 
   return (
     <div className="rating-panel-enter mt-3 w-full max-w-md rounded-xl border border-zinc-200 bg-white p-5 shadow-lg">
-      <p className="text-lg font-bold text-zinc-900">{HEADLINE[result.rating]}</p>
+      {/* Headline is the one thing a rushed reader needs — kept largest
+          and first (Pareto Principle, Serial Position Effect). */}
+      <p className="text-xl font-bold leading-snug text-zinc-900">
+        {HEADLINE[result.rating]}
+      </p>
       {result.overrideApplied && (
         <p className="mt-1 text-xs font-medium text-red-700">
           Forced high risk: 3+ verified scam reports.
         </p>
       )}
 
-      <div className="mt-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-          Terms of Service
-        </p>
+      <Section label="Terms of Service">
         {result.tos.redFlags.length > 0 ? (
-          <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-zinc-700">
+          <ul className="list-disc space-y-1 pl-5">
             {result.tos.redFlags.slice(0, 3).map((flag, i) => (
               <li key={i}>{flag.text}</li>
             ))}
           </ul>
         ) : (
-          <p className="mt-1 text-sm text-zinc-700">{tosSummaryLine(result)}</p>
+          tosSummaryLine(result)
         )}
-      </div>
+      </Section>
 
-      <div className="mt-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-          Community reports
-        </p>
-        <p className="mt-1 text-sm text-zinc-700">{communitySummary(result)}</p>
-      </div>
+      <Section label="Community reports">{communitySummary(result)}</Section>
 
-      <div className="mt-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-          Technical security
-        </p>
-        <p className="mt-1 text-sm text-zinc-700">
-          {result.security.signals.https ? "HTTPS enabled" : "No HTTPS"} ·{" "}
-          {result.security.signals.hasCSP ? "CSP present" : "Missing CSP"} ·{" "}
-          {result.security.signals.exposedPaths.length > 0
-            ? "Exposed sensitive paths found"
-            : "No exposed paths found"}
-        </p>
-      </div>
+      <Section label="Technical security">
+        {result.security.signals.https ? "HTTPS enabled" : "No HTTPS"} ·{" "}
+        {result.security.signals.hasCSP ? "CSP present" : "Missing CSP"} ·{" "}
+        {result.security.signals.exposedPaths.length > 0
+          ? "Exposed sensitive paths found"
+          : "No exposed paths found"}
+      </Section>
 
       <button
         type="button"
         onClick={() => setReported(true)}
         disabled={reported}
-        className="mt-5 w-full rounded-lg bg-zinc-900 py-2 text-sm font-semibold text-white disabled:bg-zinc-400"
+        className="mt-5 h-11 w-full rounded-lg bg-zinc-900 text-sm font-semibold text-white transition-colors disabled:bg-zinc-400"
       >
-        {reported ? "Report submitted — thank you" : "Report this site"}
+        {reported ? "✓ Report submitted — thank you" : "Report this site"}
       </button>
     </div>
   );
