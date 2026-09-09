@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { ScanResult } from "@/lib/types";
 import { LockIcon } from "@/components/LockIcon";
 
-const HEADLINE: Record<ScanResult["rating"], string> = {
+export const RATING_HEADLINE: Record<ScanResult["rating"], string> = {
   trustworthy: "🟢 Looks trustworthy",
   caution: "🟡 Proceed with caution",
   high_risk: "🔴 High risk",
@@ -66,8 +66,8 @@ export function RatingPanel({ result }: { result: ScanResult }) {
           face here is the "peak" moment of the whole interaction. */}
       <div className="flex items-center justify-center gap-3">
         <LockIcon rating={result.rating} open size={44} />
-        <p className="text-xl font-bold leading-snug text-stone-900">
-          {HEADLINE[result.rating]}
+        <p className="font-display text-xl font-bold leading-snug text-stone-900">
+          {RATING_HEADLINE[result.rating]}
         </p>
       </div>
       {result.overrideApplied && (

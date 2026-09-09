@@ -1,18 +1,22 @@
 import type { Rating } from "@/lib/types";
 
+export type LockState = Rating | "idle";
+
 interface LockIconProps {
-  rating: Rating;
+  rating: LockState;
   open: boolean;
   size?: number;
   className?: string;
 }
 
-const RATING_COLOR: Record<Rating, string> = {
+const COLOR: Record<LockState, string> = {
+  idle: "#0d9488",
   trustworthy: "#16a34a",
   caution: "#ca8a04",
   high_risk: "#dc2626",
 };
-const RATING_COLOR_DARK: Record<Rating, string> = {
+const COLOR_DARK: Record<LockState, string> = {
+  idle: "#0f766e",
   trustworthy: "#0f7c37",
   caution: "#8a5e02",
   high_risk: "#a31d1d",
@@ -20,7 +24,8 @@ const RATING_COLOR_DARK: Record<Rating, string> = {
 
 // Mouth curves are drawn with the "bowl holds water" rule: a control
 // point below the endpoints reads as a smile, above reads as a frown.
-const MOUTH_PATH: Record<Rating, string> = {
+const MOUTH_PATH: Record<LockState, string> = {
+  idle: "M58 112 Q80 130 102 112",
   trustworthy: "M58 112 Q80 132 102 112",
   caution: "M58 116 q11 6 22 0 q11 -6 22 0",
   high_risk: "M58 122 Q80 102 102 122",
@@ -28,7 +33,8 @@ const MOUTH_PATH: Record<Rating, string> = {
 
 // Named per the character-select exploration (see locki-design.md §4.1) —
 // "Locki" was the direction chosen: big eyes, stubby arms, zero chill.
-const REACTION: Record<Rating, "safe" | "caution" | "risk"> = {
+const REACTION: Record<LockState, "safe" | "caution" | "risk"> = {
+  idle: "safe",
   trustworthy: "safe",
   caution: "caution",
   high_risk: "risk",
@@ -37,15 +43,17 @@ const REACTION: Record<Rating, "safe" | "caution" | "risk"> = {
 // Shackle rotates open on click, and rests half-open for "caution" even
 // when idle, so color is never the only signal (per design spec §4.4).
 // The reaction (hop/shimmy/flinch) is a one-shot animation, not a
-// perpetual idle loop — the badge floats persistently in a corner of the
-// viewport, and constant ambient motion there would fight the
+// perpetual idle loop — a constantly-moving character would fight the
 // accessibility-first "no distracting motion" principle in §4.4. It
 // replays on every scan because the badge/panel remount per result
 // (keyed in app/page.tsx), which is also what makes this safe to express
 // as a plain CSS mount animation instead of JS-driven retriggering.
+// "idle" is a fourth, UI-only appearance (teal, never a scoring color)
+// used before the first scan, so Locki greets the page as a companion
+// rather than only showing up once there's a verdict to render.
 export function LockIcon({ rating, open, size = 32, className }: LockIconProps) {
-  const color = RATING_COLOR[rating];
-  const colorDark = RATING_COLOR_DARK[rating];
+  const color = COLOR[rating];
+  const colorDark = COLOR_DARK[rating];
   const idleTilt = rating === "caution" && !open;
   const shackleClass = `lock-shackle${open || idleTilt ? " lock-shackle-open" : ""}`;
 
@@ -56,7 +64,7 @@ export function LockIcon({ rating, open, size = 32, className }: LockIconProps) 
       height={size}
       className={className}
       role="img"
-      aria-label={`${rating.replace("_", " ")} rating`}
+      aria-label={rating === "idle" ? "Locki, ready to check a site" : `${rating.replace("_", " ")} rating`}
     >
       <g className="lock-figure" data-reaction={REACTION[rating]}>
         <ellipse

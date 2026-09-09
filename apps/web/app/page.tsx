@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LockBadge } from "@/components/LockBadge";
-import { RatingPanel } from "@/components/RatingPanel";
-import type { ScanResult } from "@/lib/types";
+import { LockAvatar } from "@/components/LockAvatar";
+import { RatingPanel, RATING_HEADLINE } from "@/components/RatingPanel";
+import type { ScanResult, Rating } from "@/lib/types";
 
 // Cycled during a scan so the wait reads as progress toward a finish line
 // rather than an indeterminate stall (Doherty Threshold, Goal-Gradient Effect).
@@ -12,6 +12,12 @@ const SCAN_STAGES = [
   "Checking Terms of Service…",
   "Checking community reports…",
 ];
+
+const CHIP_STYLE: Record<Rating, string> = {
+  trustworthy: "bg-green-50 border-green-600 text-green-900",
+  caution: "bg-yellow-50 border-yellow-600 text-yellow-900",
+  high_risk: "bg-red-50 border-red-600 text-red-900",
+};
 
 // Accepts whatever a user types or pastes — a bare domain, a full URL with
 // path/query, with or without "www." — and reduces it to the origin we
@@ -79,15 +85,31 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gradient-to-b from-amber-100 via-orange-50 to-white px-4 py-16">
-      <div className="w-full max-w-md text-center">
-        <div className="flex items-center justify-center gap-2">
-          <span className="text-2xl">🔒</span>
-          <h1 className="text-2xl font-bold text-stone-900">Locki</h1>
-        </div>
+    <div className="relative isolate flex min-h-screen flex-col items-center overflow-hidden bg-gradient-to-b from-amber-100 via-orange-50 to-white px-4 py-16">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-orange-300/40 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-20 top-52 h-80 w-80 rounded-full bg-teal-300/30 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-amber-300/30 blur-3xl"
+      />
+
+      <div className="relative z-10 w-full max-w-md text-center">
+        <h1 className="font-display text-4xl font-extrabold tracking-tight text-stone-900">
+          Locki
+        </h1>
         <p className="mt-1 text-sm text-stone-600">
           Check a site&apos;s trustworthiness before you proceed.
         </p>
+
+        <div className="mt-6" key={result ? result.domain + result.scannedAt : "idle"}>
+          <LockAvatar state={result ? result.rating : "idle"} />
+        </div>
 
         <form onSubmit={handleSubmit} className="mt-6 flex gap-2">
           <input
@@ -115,7 +137,7 @@ export default function Home() {
           Try{" "}
           <button
             type="button"
-            className="text-orange-600 underline underline-offset-2 hover:text-orange-700"
+            className="text-teal-700 underline underline-offset-2 hover:text-teal-800"
             onClick={() => setUrl("quick-cash-loans.test")}
           >
             quick-cash-loans.test
@@ -128,24 +150,24 @@ export default function Home() {
             {error}
           </p>
         )}
-      </div>
 
-      {result && (
-        // Keyed by scan time so a repeat check on a new site fully
-        // remounts the badge/face and replays its reveal animation
-        // instead of silently patching props on the existing DOM node.
-        <div
-          key={result.domain + result.scannedAt}
-          className="mt-8 flex flex-col items-center"
-        >
-          <LockBadge
-            rating={result.rating}
-            open={open}
-            onToggle={() => setOpen((o) => !o)}
-          />
-          {open && <RatingPanel result={result} />}
-        </div>
-      )}
+        {result && (
+          <div className="mt-6 flex flex-col items-center">
+            <button
+              type="button"
+              onClick={() => setOpen((o) => !o)}
+              aria-expanded={open}
+              className={`flex h-11 items-center gap-2 rounded-full border-2 px-5 text-sm font-semibold shadow-sm transition-transform hover:-translate-y-0.5 ${CHIP_STYLE[result.rating]}`}
+            >
+              {RATING_HEADLINE[result.rating]}
+              <span aria-hidden className={`transition-transform ${open ? "rotate-180" : ""}`}>
+                ▾
+              </span>
+            </button>
+            {open && <RatingPanel result={result} />}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
