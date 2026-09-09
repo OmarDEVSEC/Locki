@@ -73,7 +73,9 @@ Override: 3+ verified scam reports forces 🔴 regardless of other scores.
 
 - Appears **top-right of the browser viewport** as a small floating badge (extension-injected overlay, not a native browser UI element — works across all browsers uniformly).
 - Idle state: a simple closed-lock glyph, color-coded to the site's current rating (green/yellow/red outline or fill).
-- **Face**: the lock body doubles as a face — it smiles for 🟢, stays neutral (flat mouth) for 🟡, and frowns with angled eyebrows for 🔴. This is a third independent signal alongside color and shackle shape, and it's the one most legible at a glance to a rushed or less tech-savvy user (a facial expression reads faster than parsing an icon shape).
+- **Face**: the lock body doubles as a face — it smiles for 🟢, stays neutral (flat mouth) for 🟡, and frowns for 🔴, arms raised in a guard pose. This is a third independent signal alongside color and shackle shape, and it's the one most legible at a glance to a rushed or less tech-savvy user (a facial expression reads faster than parsing an icon shape).
+- **Named "Locki"** — the mascot shares the product's own name, deliberately. Explored alongside two other directions ("Socki," a sturdier guardian whose shackle doubled as an eyebrow, and "Pocki," a near-limbless blob whose personality lived entirely in squash-and-stretch breathing); Locki's big-eyed, stubby-armed cuteness won out as the friendliest read even mid-flinch on a risky site.
+- The one-shot hop/shimmy/flinch reaction plays once per scan (the badge/panel remount per result), not as a perpetual idle loop — a persistent corner badge that never stops moving would fight the "no distracting motion" rule below. The one exception is a slow ambient blink (~every 4.6s): brief enough not to read as ambient motion, and it's the specific bit of "alive" charm the friendlier direction was chosen for.
 - **Load-in animation:** on page load, the lock icon animates in with a short "snap shut" motion — scales from 0 → 105% → 100% (~300ms, ease-out) — drawing the eye without being jarring. For 🔴 sites, add a subtle pulse (opacity 100%→70%→100%, 1.2s loop, 2 cycles then settle) to draw attention without being alarming/flashing.
 - Hover/tap: gentle lift (translateY -2px + soft shadow) to signal interactivity.
 
@@ -96,7 +98,7 @@ Override: 3+ verified scam reports forces 🔴 regardless of other scores.
 - Respect `prefers-reduced-motion`: fall back to instant state changes, no pulse/loop animations.
 - No flashing >3Hz (seizure-safety baseline regardless of reduced-motion setting).
 - Color is never the *only* signal — pair every color state with an icon shape change (closed lock/half-open/open), a facial expression, and a text label, for colorblind accessibility.
-- The rating colors (green/yellow/red) are reserved exclusively for trust signal — everything else in the UI (buttons, links, focus states) uses a single neutral brand accent (indigo) so the semantic colors keep their meaning instead of competing with decorative ones.
+- The rating colors (green/yellow/red) are reserved exclusively for trust signal — everything else in the UI (buttons, links, focus states, backgrounds) uses a warm tan/amber ground with a vibrant orange accent so the semantic colors keep their meaning instead of competing with decorative ones. (Originally a cooler indigo; moved to warm tones so the page reads as welcoming rather than clinical, matching Locki's own personality.)
 
 ### 4.5 Applied Laws of UX
 

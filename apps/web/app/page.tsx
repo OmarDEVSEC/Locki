@@ -79,13 +79,13 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gradient-to-b from-indigo-50 via-white to-white px-4 py-16">
+    <div className="flex min-h-screen flex-col items-center bg-gradient-to-b from-amber-100 via-orange-50 to-white px-4 py-16">
       <div className="w-full max-w-md text-center">
         <div className="flex items-center justify-center gap-2">
           <span className="text-2xl">🔒</span>
-          <h1 className="text-2xl font-bold text-zinc-900">Locki</h1>
+          <h1 className="text-2xl font-bold text-stone-900">Locki</h1>
         </div>
-        <p className="mt-1 text-sm text-zinc-600">
+        <p className="mt-1 text-sm text-stone-600">
           Check a site&apos;s trustworthiness before you proceed.
         </p>
 
@@ -96,26 +96,26 @@ export default function Home() {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="e.g. example.com"
-            className="h-11 flex-1 rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900 placeholder-zinc-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+            className="h-11 flex-1 rounded-lg border border-stone-300 bg-white px-3 text-base text-stone-900 placeholder-stone-400 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
           />
           <button
             type="submit"
             disabled={loading}
-            className="h-11 min-w-24 rounded-lg bg-indigo-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:bg-zinc-400"
+            className="h-11 min-w-24 rounded-lg bg-orange-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-orange-700 disabled:bg-stone-400"
           >
             {loading ? "Checking…" : "Check"}
           </button>
         </form>
 
-        <div aria-live="polite" className="mt-2 h-4 text-xs text-zinc-500">
+        <div aria-live="polite" className="mt-2 h-4 text-xs text-stone-500">
           {loading && SCAN_STAGES[stageIndex]}
         </div>
 
-        <p className="mt-1 text-xs text-zinc-400">
+        <p className="mt-1 text-xs text-stone-400">
           Try{" "}
           <button
             type="button"
-            className="text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
+            className="text-orange-600 underline underline-offset-2 hover:text-orange-700"
             onClick={() => setUrl("quick-cash-loans.test")}
           >
             quick-cash-loans.test

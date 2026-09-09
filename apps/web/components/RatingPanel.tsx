@@ -47,11 +47,11 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mt-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3">
-      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+    <div className="mt-3 rounded-lg border border-amber-100 bg-amber-50 p-3">
+      <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">
         {label}
       </p>
-      <div className="mt-1 text-sm text-zinc-700">{children}</div>
+      <div className="mt-1 text-sm text-stone-700">{children}</div>
     </div>
   );
 }
@@ -60,13 +60,13 @@ export function RatingPanel({ result }: { result: ScanResult }) {
   const [reported, setReported] = useState(false);
 
   return (
-    <div className="rating-panel-enter mt-3 w-full max-w-md rounded-xl border border-zinc-200 bg-white p-5 shadow-lg">
+    <div className="rating-panel-enter mt-3 w-full max-w-md rounded-xl border border-stone-200 bg-white p-5 shadow-lg">
       {/* Headline is the one thing a rushed reader needs — kept largest
           and first (Pareto Principle, Serial Position Effect). The larger
           face here is the "peak" moment of the whole interaction. */}
       <div className="flex items-center justify-center gap-3">
         <LockIcon rating={result.rating} open size={44} />
-        <p className="text-xl font-bold leading-snug text-zinc-900">
+        <p className="text-xl font-bold leading-snug text-stone-900">
           {HEADLINE[result.rating]}
         </p>
       </div>
@@ -102,7 +102,7 @@ export function RatingPanel({ result }: { result: ScanResult }) {
         type="button"
         onClick={() => setReported(true)}
         disabled={reported}
-        className="mt-5 h-11 w-full rounded-lg bg-zinc-900 text-sm font-semibold text-white transition-colors disabled:bg-zinc-400"
+        className="mt-5 h-11 w-full rounded-lg bg-stone-900 text-sm font-semibold text-white transition-colors disabled:bg-stone-400"
       >
         {reported ? "✓ Report submitted — thank you" : "Report this site"}
       </button>

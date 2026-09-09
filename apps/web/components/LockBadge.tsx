@@ -39,7 +39,7 @@ export function LockBadge({ rating, open, onToggle }: LockBadgeProps) {
       >
         <LockIcon rating={rating} open={open} />
       </span>
-      <span className="text-base font-semibold text-zinc-800">
+      <span className="text-base font-semibold text-stone-800">
         {RATING_LABEL[rating]}
       </span>
     </button>
