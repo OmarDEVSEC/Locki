@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ScanResult } from "@/lib/types";
 import { LockIcon } from "@/components/LockIcon";
+import type { CharacterId } from "@/lib/characters";
 
 export const RATING_HEADLINE: Record<ScanResult["rating"], string> = {
   trustworthy: "🟢 Looks trustworthy",
@@ -56,7 +57,13 @@ function Section({
   );
 }
 
-export function RatingPanel({ result }: { result: ScanResult }) {
+export function RatingPanel({
+  result,
+  character,
+}: {
+  result: ScanResult;
+  character: CharacterId;
+}) {
   const [reported, setReported] = useState(false);
 
   return (
@@ -65,7 +72,7 @@ export function RatingPanel({ result }: { result: ScanResult }) {
           and first (Pareto Principle, Serial Position Effect). The larger
           face here is the "peak" moment of the whole interaction. */}
       <div className="flex items-center justify-center gap-3">
-        <LockIcon rating={result.rating} open size={44} />
+        <LockIcon character={character} rating={result.rating} open size={44} />
         <p className="font-display text-xl font-bold leading-snug text-stone-900">
           {RATING_HEADLINE[result.rating]}
         </p>

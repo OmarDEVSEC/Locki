@@ -74,7 +74,7 @@ Override: 3+ verified scam reports forces 🔴 regardless of other scores.
 - Appears **top-right of the browser viewport** as a small floating badge (extension-injected overlay, not a native browser UI element — works across all browsers uniformly).
 - Idle state: a simple closed-lock glyph, color-coded to the site's current rating (green/yellow/red outline or fill).
 - **Face**: the lock body doubles as a face — it smiles for 🟢, stays neutral (flat mouth) for 🟡, and frowns for 🔴, arms raised in a guard pose. This is a third independent signal alongside color and shackle shape, and it's the one most legible at a glance to a rushed or less tech-savvy user (a facial expression reads faster than parsing an icon shape).
-- **Named "Locki"** — the mascot shares the product's own name, deliberately. Explored alongside two other directions ("Socki," a sturdier guardian whose shackle doubled as an eyebrow, and "Pocki," a near-limbless blob whose personality lived entirely in squash-and-stretch breathing); Locki's big-eyed, stubby-armed cuteness won out as the friendliest read even mid-flinch on a risky site.
+- **Named "Locki"** — the mascot shares the product's own name, deliberately: big eyes, stubby arms, cuteness that reads as friendly even mid-flinch on a risky site. It's the default of three selectable companions (§4.6) rather than the only option.
 - The one-shot hop/shimmy/flinch reaction plays once per scan (the badge/panel remount per result), not as a perpetual idle loop — a persistent corner badge that never stops moving would fight the "no distracting motion" rule below. The one exception is a slow ambient blink (~every 4.6s): brief enough not to read as ambient motion, and it's the specific bit of "alive" charm the friendlier direction was chosen for.
 - **Load-in animation:** on page load, the lock icon animates in with a short "snap shut" motion — scales from 0 → 105% → 100% (~300ms, ease-out) — drawing the eye without being jarring. For 🔴 sites, add a subtle pulse (opacity 100%→70%→100%, 1.2s loop, 2 cycles then settle) to draw attention without being alarming/flashing.
 - Hover/tap: gentle lift (translateY -2px + soft shadow) to signal interactivity.
@@ -116,6 +116,17 @@ Concrete decisions in the lookup site (`apps/web`), mapped to the psychology pri
 | Error states styled as a calm bordered card, not raw red text | Peak-End Rule |
 
 Not forced: Parkinson's Law and the Zeigarnik Effect don't meaningfully apply to a single-shot lookup (no open-ended task to expand, and the "report submitted" state already closes the loop rather than leaving it dangling).
+
+### 4.6 Character Selection
+
+The three directions from the original character-select exploration (§4.1) all shipped as selectable companions rather than one being discarded — a "Choose your companion" row of thumbnails sits below the avatar:
+
+- **Locki** (default) — big-eyed greeter, stubby arms; hops when safe, flinches with arms raised when risky.
+- **Socki** — sturdier guardian; a rotating brow does the expression work instead of a face full of motion, and it reacts with a spin/tilt/step rather than a bounce. No arms — it's meant to read as competent rather than excitable.
+- **Pocki** — near-limbless soft blob; all personality lives in squash-and-stretch and one large mouth shape per state (including a full "gasp" ellipse for 🔴, versus the other two's frown).
+- All three share one color/state system (idle teal, then the same green/amber/red as the rating) and the same underlying `LockIcon` component — only the body rig, mouth shapes, and reaction keyframes differ per character, plus each gets its own first-person voice in the speech bubble (Locki exclamatory, Socki measured, Pocki gentle).
+- The chosen character persists in `localStorage` (`locki:character`), read via `useSyncExternalStore` rather than an effect-driven read — that sidesteps both the SSR/hydration mismatch (`localStorage` doesn't exist server-side) and the "setState synchronously in an effect" anti-pattern a naive `useEffect` read would hit.
+- Visual polish common to all three: a radial gradient body fill (vinyl-toy highlight, not a flat color), a soft ground shadow, glossy two-highlight eyes, and a cheek blush that's fully opaque on Locki/Pocki but deliberately faint on Socki — consistent with Socki reading as the more composed, less overtly cute option.
 
 ---
 

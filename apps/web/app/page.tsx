@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { LockAvatar } from "@/components/LockAvatar";
+import { CharacterPicker } from "@/components/CharacterPicker";
 import { RatingPanel, RATING_HEADLINE } from "@/components/RatingPanel";
+import { useCharacterPreference } from "@/lib/characters";
 import type { ScanResult, Rating } from "@/lib/types";
 
 // Cycled during a scan so the wait reads as progress toward a finish line
@@ -37,6 +39,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [stageIndex, setStageIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [character, selectCharacter] = useCharacterPreference();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -107,8 +110,15 @@ export default function Home() {
           Check a site&apos;s trustworthiness before you proceed.
         </p>
 
-        <div className="mt-6" key={result ? result.domain + result.scannedAt : "idle"}>
-          <LockAvatar state={result ? result.rating : "idle"} />
+        <div
+          className="mt-6"
+          key={character + (result ? result.domain + result.scannedAt : "idle")}
+        >
+          <LockAvatar character={character} state={result ? result.rating : "idle"} />
+        </div>
+
+        <div className="mt-5">
+          <CharacterPicker selected={character} onSelect={selectCharacter} />
         </div>
 
         <form onSubmit={handleSubmit} className="mt-6 flex gap-2">
@@ -164,7 +174,7 @@ export default function Home() {
                 ▾
               </span>
             </button>
-            {open && <RatingPanel result={result} />}
+            {open && <RatingPanel result={result} character={character} />}
           </div>
         )}
       </div>

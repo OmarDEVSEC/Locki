@@ -112,6 +112,30 @@ body {
 @keyframes lock-guard-l { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-40deg) translate(2px, -4px); } }
 @keyframes lock-guard-r { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(40deg) translate(-2px, -4px); } }
 
+@keyframes socki-spin { 0% { transform: rotate(0) scale(1); } 40% { transform: rotate(200deg) scale(1.05); } 100% { transform: rotate(360deg) scale(1); } }
+@keyframes socki-tilt { 0% { transform: rotate(0); } 60% { transform: rotate(9deg); } 100% { transform: rotate(6deg); } }
+@keyframes socki-step { 0% { transform: translateX(0); } 30% { transform: translateX(-8px); } 100% { transform: translateX(0); } }
+
+@keyframes pocki-bounce {
+  0% { transform: translateY(0) scale(1, 1); }
+  35% { transform: translateY(-14px) scale(1.08, 0.92); }
+  65% { transform: translateY(0) scale(0.94, 1.07); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes pocki-wobble {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-9deg); }
+  45% { transform: rotate(7deg); }
+  70% { transform: rotate(-4deg); }
+  90% { transform: rotate(2deg); }
+}
+@keyframes pocki-gasp {
+  0% { transform: translateY(0) scale(1, 1); }
+  40% { transform: translateY(-12px) scale(0.92, 1.12); }
+  70% { transform: translateY(0) scale(1.06, 0.92); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .lock-badge-enter {
     animation: lock-snap-in 300ms ease-out;
@@ -137,11 +161,20 @@ body {
     transform-box: fill-box;
     transform-origin: center;
   }
-  .lock-figure[data-reaction="safe"] { animation: lock-hop 650ms cubic-bezier(.34,1.56,.64,1) 500ms both; }
-  .lock-figure[data-reaction="caution"] { animation: lock-shimmy 500ms ease-in-out 500ms both; }
-  .lock-figure[data-reaction="risk"] { animation: lock-flinch 500ms ease-out 500ms both; }
-  .lock-figure[data-reaction="risk"] .lock-arm-l { animation: lock-guard-l 500ms ease-out 500ms both; transform-box: fill-box; }
-  .lock-figure[data-reaction="risk"] .lock-arm-r { animation: lock-guard-r 500ms ease-out 500ms both; transform-box: fill-box; }
+
+  .char-locki[data-reaction="safe"] { animation: lock-hop 650ms cubic-bezier(.34,1.56,.64,1) 500ms both; }
+  .char-locki[data-reaction="caution"] { animation: lock-shimmy 500ms ease-in-out 500ms both; }
+  .char-locki[data-reaction="risk"] { animation: lock-flinch 500ms ease-out 500ms both; }
+  .char-locki[data-reaction="risk"] .lock-arm-l { animation: lock-guard-l 500ms ease-out 500ms both; transform-box: fill-box; }
+  .char-locki[data-reaction="risk"] .lock-arm-r { animation: lock-guard-r 500ms ease-out 500ms both; transform-box: fill-box; }
+
+  .char-socki[data-reaction="safe"] { animation: socki-spin 550ms ease-in-out 500ms both; transform-box: fill-box; transform-origin: center; }
+  .char-socki[data-reaction="caution"] { animation: socki-tilt 500ms ease-out 500ms both; transform-box: fill-box; transform-origin: center; }
+  .char-socki[data-reaction="risk"] { animation: socki-step 450ms ease-out 500ms both; }
+
+  .char-pocki[data-reaction="safe"] { animation: pocki-bounce 650ms cubic-bezier(.34,1.56,.64,1) 500ms both; }
+  .char-pocki[data-reaction="caution"] { animation: pocki-wobble 700ms ease-in-out 500ms both; }
+  .char-pocki[data-reaction="risk"] { animation: pocki-gasp 550ms ease-out 500ms both; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -158,6 +191,31 @@ body {
   .lock-shackle {
     transition: none !important;
   }
+}
+
+.char-socki .brow {
+  transition: transform 250ms ease;
+  transform-box: fill-box;
+}
+.char-socki .brow-l { transform-origin: 100% 100%; }
+.char-socki .brow-r { transform-origin: 0% 100%; }
+.char-socki[data-reaction="caution"] .brow-l { transform: rotate(-14deg) translateY(-2px); }
+.char-socki[data-reaction="risk"] .brow-l { transform: rotate(-22deg) translateY(-4px); }
+.char-socki[data-reaction="risk"] .brow-r { transform: rotate(22deg) translateY(-4px); }
+
+.blush {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+[data-reaction="safe"] .blush {
+  opacity: 0.55;
+}
+.char-socki .blush {
+  opacity: 0.3;
+}
+.char-socki[data-reaction="risk"] .blush,
+.char-socki[data-reaction="caution"] .blush {
+  opacity: 0;
 }
 
 .lock-shackle-open {
