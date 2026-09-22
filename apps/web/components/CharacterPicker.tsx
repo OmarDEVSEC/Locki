@@ -8,11 +8,14 @@ interface CharacterPickerProps {
 
 export function CharacterPicker({ selected, onSelect }: CharacterPickerProps) {
   return (
-    <div className="flex flex-col items-center gap-2">
-      <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">
-        Choose your companion
+    <div className="w-full">
+      <p
+        className="mb-4 text-center font-bold uppercase tracking-widest text-muted"
+        style={{ fontSize: "0.62rem", letterSpacing: "0.1em" }}
+      >
+        Choose your guide
       </p>
-      <div className="flex gap-3">
+      <div className="flex justify-center gap-3">
         {CHARACTERS.map((c) => {
           const isSelected = c.id === selected;
           return (
@@ -21,12 +24,27 @@ export function CharacterPicker({ selected, onSelect }: CharacterPickerProps) {
               type="button"
               onClick={() => onSelect(c.id)}
               aria-pressed={isSelected}
-              title={`${c.name} — ${c.tagline}`}
-              className={`flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm transition-transform hover:-translate-y-0.5 ${
-                isSelected ? "ring-2 ring-orange-500 ring-offset-2" : "ring-1 ring-stone-200"
-              }`}
+              className="flex flex-col items-center gap-1.5 rounded-2xl px-4 py-3 transition-all hover:scale-105 active:scale-95"
+              style={
+                isSelected
+                  ? {
+                      background: "var(--color-void-deep)",
+                      color: "var(--color-ink)",
+                      border: "1.5px solid var(--color-ink)",
+                      boxShadow: "0 0 20px rgba(244,245,247,0.25)",
+                    }
+                  : {
+                      background: "var(--color-panel)",
+                      color: "var(--color-muted)",
+                      border: "1.5px solid var(--color-border)",
+                    }
+              }
             >
-              <LockIcon character={c.id} rating="idle" open={false} size={38} />
+              <LockIcon character={c.id} rating="idle" open={false} size={44} />
+              <span className="font-display font-semibold" style={{ fontSize: "0.9rem" }}>
+                {c.name}
+              </span>
+              <span className="text-xs font-medium opacity-70">{c.tagline}</span>
             </button>
           );
         })}

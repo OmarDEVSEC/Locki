@@ -9,9 +9,9 @@ export interface CharacterMeta {
 }
 
 export const CHARACTERS: CharacterMeta[] = [
-  { id: "locki", name: "Locki", tagline: "The overjoyed greeter" },
-  { id: "socki", name: "Socki", tagline: "The steady guardian" },
-  { id: "pocki", name: "Pocki", tagline: "The gentle marshmallow" },
+  { id: "locki", name: "Locki", tagline: "The watchful guardian" },
+  { id: "socki", name: "Socki", tagline: "The steady sentinel" },
+  { id: "pocki", name: "Pocki", tagline: "The small apprentice" },
 ];
 
 export const DEFAULT_CHARACTER: CharacterId = "locki";
