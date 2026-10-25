@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-orange:       #FF6B35;
+  --color-orange-light: #FFF0EA;
+  --color-trust-green:  #22C55E;
+  --color-trust-amber:  #F59E0B;
+  --color-trust-red:    #EF4444;
+  --color-trust-teal:   #14B8A6;
+  --color-cream:        #FFF8F3;
+  --color-parchment:    #F0E6D8;
+  --color-bark:         #2D1B0E;
+  --color-clay:         #8B7355;
+  --font-display:       'Fredoka', sans-serif;
+  --font-body:          'Nunito', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-cream);
+  color: var(--color-bark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
+
+/* ── URL input focus ───────────────────────────────────────── */
+.url-input:focus {
+  outline: none;
+  border-color: var(--color-orange) !important;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.18);
+}
+
+/* ── Animations ────────────────────────────────────────────── */
+@keyframes floatBob {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes scanBounce {
+  0%,  100% { transform: translateY(0px)   rotate(0deg); }
+  30%        { transform: translateY(-12px) rotate(5deg); }
+  65%        { transform: translateY(-14px) rotate(-5deg); }
+}
+
+@keyframes hopCycle {
+  0%,  22%, 100% { transform: translateY(0px)   scaleX(1)    scaleY(1); }
+  6%              { transform: translateY(-5px)  scaleX(0.97) scaleY(1.04); }
+  12%             { transform: translateY(-22px) scaleX(1.08) scaleY(0.88); }
+  17%             { transform: translateY(-3px)  scaleX(1.02) scaleY(0.99); }
+}
+
+@keyframes wobbleGently {
+  0%, 100% { transform: rotate(0deg); }
+  22%       { transform: rotate(-5deg); }
+  67%       { transform: rotate(5deg); }
+}
+
+@keyframes flinchCycle {
+  0%,  20%, 100% { transform: translateX(0px)  rotate(0deg); }
+  2%              { transform: translateX(-7px) rotate(-4deg); }
+  5%              { transform: translateX(7px)  rotate(4deg); }
+  8%              { transform: translateX(-5px) rotate(-2deg); }
+  11%             { transform: translateX(5px)  rotate(2deg); }
+  14%             { transform: translateX(-2px) rotate(-1deg); }
+  17%             { transform: translateX(0px)  rotate(0deg); }
+}
+
+@keyframes sockiTilt {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25%       { transform: rotate(-7deg) scale(1.03); }
+  75%       { transform: rotate(7deg) scale(1.03); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0px)   scale(1); }
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.3; transform: scale(0.75); }
+  50%       { opacity: 1;   transform: scale(1.2); }
+}
+
+@keyframes resultReveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0px); }
+}
+
+.anim-float   { animation: floatBob      3s    ease-in-out infinite; }
+.anim-scan    { animation: scanBounce    0.85s ease-in-out infinite; }
+.anim-hop     { animation: hopCycle      3.5s  ease-in-out infinite; }
+.anim-wobble  { animation: wobbleGently  2.2s  ease-in-out infinite; }
+.anim-flinch  { animation: flinchCycle   4.5s  ease-in-out infinite; }
+.anim-tilt    { animation: sockiTilt     2.8s  ease-in-out infinite; }
+.anim-slide   { animation: slideDown     0.22s ease-out    forwards; }
+.anim-pulse   { animation: pulseDot      1.1s  ease-in-out infinite; }
+.anim-reveal  { animation: resultReveal  0.45s ease-out    forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-float, .anim-scan, .anim-hop, .anim-wobble, .anim-flinch,
+  .anim-tilt, .anim-slide, .anim-pulse, .anim-reveal {
+    animation: none !important;
+  }
+}

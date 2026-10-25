@@ -56,12 +56,19 @@ Three sub-scores (0–100), blended into one overall rating.
 overall = (security_score × 0.35) + (tos_score × 0.35) + (community_score × 0.30)
 ```
 
+The blend runs only over sub-scores that have real data; weights are renormalized across the included ones. Exclusion rules:
+- **Unreachable site** — not scored 0. Security is excluded and the result is marked unreachable.
+- **Unknown ToS** — excluded from the blend, **and** caps the rating at Caution. A site is never "Safe" without a ToS.
+- **Community** — excluded when there are zero reports (v1, per §7).
+
+Results carry two extra fields: `confidence` (`full` / `partial` / `insufficient`) and `excluded[]` (which sub-scores were left out, and why). If nothing is scoreable, the result is `rating = caution` with `confidence = insufficient`. This is a stopgap: `rating` has no "unrated" value (see §5).
+
 **Rating buckets:**
-| Score | Rating |
-|---|---|
-| 80–100 | 🟢 Trustworthy |
-| 50–79 | 🟡 Caution |
-| 0–49 | 🔴 High risk |
+| Score | Rating | Verdict copy |
+|---|---|---|
+| 80–100 | 🟢 Safe | "Safe" |
+| 50–79 | 🟡 Caution | "Some warning signs. Take care." |
+| 0–49 | 🔴 High risk | "High risk. Be careful." |
 
 Override: 3+ verified scam reports forces 🔴 regardless of other scores.
 
@@ -73,12 +80,12 @@ Override: 3+ verified scam reports forces 🔴 regardless of other scores.
 
 - Appears **top-right of the browser viewport** as a small floating badge (extension-injected overlay, not a native browser UI element — works across all browsers uniformly).
 - Idle state: a simple closed-lock glyph, color-coded to the site's current rating (green/yellow/red outline or fill).
-- **Face**: the lock body doubles as a face — it smiles for 🟢, stays neutral (flat mouth) for 🟡, and frowns for 🔴, arms raised in a guard pose. This is a third independent signal alongside color and shackle shape, and it's the one most legible at a glance to a rushed or less tech-savvy user (a facial expression reads faster than parsing an icon shape).
-- **Named "Locki"** — the mascot shares the product's own name, deliberately: big eyes, stubby arms, cuteness that reads as friendly even mid-flinch on a risky site. It's the default of three selectable companions (§4.6) rather than the only option.
+- **Mascot (single character)**: Locki is a calm, hooded figure, and the only mascot (see §4.6). Its lightsaber/eye color reflects the rating state. Color alone is never the signal; the rating chip carries a distinct icon shape and text label (§4.4, §4.7).
+- **Named "Locki"** — the mascot shares the product's own name, deliberately. The tone is calm and steady rather than cute, so it reads as trustworthy on a risky site.
 - The one-shot hop/shimmy/flinch reaction plays once per scan (the badge/panel remount per result), not as a perpetual idle loop — a persistent corner badge that never stops moving would fight the "no distracting motion" rule below. The one exception is a slow ambient blink (~every 4.6s): brief enough not to read as ambient motion, and it's the specific bit of "alive" charm the friendlier direction was chosen for.
 - **Load-in animation:** on page load, the lock icon animates in with a short "snap shut" motion — scales from 0 → 105% → 100% (~300ms, ease-out) — drawing the eye without being jarring. For 🔴 sites, add a subtle pulse (opacity 100%→70%→100%, 1.2s loop, 2 cycles then settle) to draw attention without being alarming/flashing.
 - Hover/tap: gentle lift (translateY -2px + soft shadow) to signal interactivity.
-- **Lookup-site variant**: the standalone site (`apps/web`) doesn't float a small corner badge like the extension will — it shows Locki large (140px) as a greeting host above the input, visible from first load in a fourth "idle" appearance (teal, never one of the three rating colors, so it can't be mistaken for a verdict) with a speech-bubble greeting. After a scan the same character swaps into the rated color/expression and the bubble copy changes to a short first-person reaction ("Whoa, hold up! This one's risky."), before the compact rating chip + detail panel appear below. Same component (`LockIcon`), same one-shot reaction animation — the extension's small persistent badge and the site's large greeting avatar are two skins on one character, not two designs.
+- **Lookup-site variant**: the standalone site (`apps/web`) doesn't float a small corner badge like the extension will — it shows a small, calm Locki beside the "Is this website safe?" headline in a neutral grey "idle" state (never one of the rating colors, so it can't be mistaken for a verdict). No speech bubble. After a scan, the result card shows Locki in the rated color next to the plain-language verdict. Same component (`LockIcon`) — the extension's small persistent badge and the site's avatar are two skins on one character, not two designs.
 
 ### 4.2 Expand Animation (click/tap the lock)
 
@@ -87,7 +94,7 @@ Override: 3+ verified scam reports forces 🔴 regardless of other scores.
 
 ### 4.3 Panel Contents (in priority order)
 
-1. **Headline rating** — big color-coded label ("🟡 Proceed with caution") — this is the only thing a rushed/elderly user *needs* to read.
+1. **Headline rating** — big color-coded label ("🟡 Some warning signs. Take care.") — this is the only thing a rushed/elderly user *needs* to read.
 2. **Top 1–3 ToS red flags** — plain language, one line each (e.g., "This site can share your data with third parties without asking again").
 3. **Community reports summary** — count + most common category (e.g., "12 users reported billing issues here in the last 6 months").
 4. **Compliance history** — if the site was previously flagged/red and has since improved (or worsened), show a small trend indicator (↑ improved / ↓ worsened) rather than raw historical data — keeps it digestible.
@@ -99,7 +106,7 @@ Override: 3+ verified scam reports forces 🔴 regardless of other scores.
 - Respect `prefers-reduced-motion`: fall back to instant state changes, no pulse/loop animations.
 - No flashing >3Hz (seizure-safety baseline regardless of reduced-motion setting).
 - Color is never the *only* signal — pair every color state with an icon shape change (closed lock/half-open/open), a facial expression, and a text label, for colorblind accessibility.
-- The rating colors (green/yellow/red) are reserved exclusively for trust signal — everything else in the UI (buttons, links, focus states, backgrounds) uses a warm tan/amber ground with a vibrant orange accent so the semantic colors keep their meaning instead of competing with decorative ones. (Originally a cooler indigo; moved to warm tones so the page reads as welcoming rather than clinical, matching Locki's own personality.)
+- The rating colors (`state-trusted/caution/danger`) are reserved exclusively for trust signal — buttons, links, focus, and backgrounds use the separate `action`/`focus`/`bg`/`surface` tokens (§4.7) so the semantic colors keep their meaning. (Supersedes the earlier warm tan/orange palette and the Jedi/Sith black-and-white reskin.)
 
 ### 4.5 Applied Laws of UX
 
@@ -108,7 +115,7 @@ Concrete decisions in the lookup site (`apps/web`), mapped to the psychology pri
 | Change | Law |
 |---|---|
 | Input auto-focused on load; accepts pasted full URLs, extra whitespace, missing scheme | Jakob's Law, Postel's Law |
-| Badge and buttons sized to a 44px-minimum touch target | Fitts's Law |
+| Badge and buttons sized to a 48px touch target (44px minimum) | Fitts's Law |
 | "Checking security… / ToS… / community…" cycles during a scan instead of a static spinner | Doherty Threshold, Goal-Gradient Effect |
 | Each panel section (ToS/community/security) wrapped in its own bounded card | Law of Common Region, Law of Proximity |
 | Headline rating kept largest and first in the panel | Pareto Principle, Serial Position Effect |
@@ -117,16 +124,20 @@ Concrete decisions in the lookup site (`apps/web`), mapped to the psychology pri
 
 Not forced: Parkinson's Law and the Zeigarnik Effect don't meaningfully apply to a single-shot lookup (no open-ended task to expand, and the "report submitted" state already closes the loop rather than leaving it dangling).
 
-### 4.6 Character Selection
+### 4.6 Character (single mascot)
 
-The three directions from the original character-select exploration (§4.1) all shipped as selectable companions rather than one being discarded — a "Choose your companion" row of thumbnails sits below the avatar:
+Decision (2026-10-25): the multi-character system (Locki/Socki/Pocki and the "Choose your guide" picker, with its `localStorage` persistence) was removed. Locki is the only mascot — a calm, hooded figure whose lightsaber/eye color reflects the rating state. One character means less choice for the user (Hick's Law, §4.5) and one design to keep consistent across the extension and the site. Verdicts no longer use Jedi/Sith-themed copy (see §4.7 and §3 for the plain-language wording).
 
-- **Locki** (default) — big-eyed greeter, stubby arms; hops when safe, flinches with arms raised when risky.
-- **Socki** — sturdier guardian; a rotating brow does the expression work instead of a face full of motion, and it reacts with a spin/tilt/step rather than a bounce. No arms — it's meant to read as competent rather than excitable.
-- **Pocki** — near-limbless soft blob; all personality lives in squash-and-stretch and one large mouth shape per state (including a full "gasp" ellipse for 🔴, versus the other two's frown).
-- All three share one color/state system (idle teal, then the same green/amber/red as the rating) and the same underlying `LockIcon` component — only the body rig, mouth shapes, and reaction keyframes differ per character, plus each gets its own first-person voice in the speech bubble (Locki exclamatory, Socki measured, Pocki gentle).
-- The chosen character persists in `localStorage` (`locki:character`), read via `useSyncExternalStore` rather than an effect-driven read — that sidesteps both the SSR/hydration mismatch (`localStorage` doesn't exist server-side) and the "setState synchronously in an effect" anti-pattern a naive `useEffect` read would hit.
-- Visual polish common to all three: a radial gradient body fill (vinyl-toy highlight, not a flat color), a soft ground shadow, glossy two-highlight eyes, and a cheek blush that's fully opaque on Locki/Pocki but deliberately faint on Socki — consistent with Socki reading as the more composed, less overtly cute option.
+### 4.7 Verdicts & Design Tokens
+
+**Verdict copy** is plain language: Safe / Caution ("Some warning signs. Take care.") / High risk ("High risk. Be careful."). Each state has a distinct icon shape plus a text label, so color is never the only signal.
+
+**Token system** lives in `apps/web/app/globals.css`, in three layers:
+1. **Primitives** — gray/blue/amber/red scales, spacing, type sizes, radii, durations, and a 48px tap size.
+2. **Semantic tokens** in a Tailwind v4 `@theme` block — `bg`, `surface`, `fg`, `fg-muted`, `action`, `focus`, and `state-idle/trusted/caution/danger` each with a `-soft` tint. Tailwind's default palette is cleared, so only semantic colors exist.
+3. **Component classes** — `.btn`, `.input`, `.card`, `.rating-chip`.
+
+Rating color flows from a `[data-state]` attribute, not per-component color props. Body text is ≥16–18px; contrast is AA minimum with an AAA target for body text; `prefers-reduced-motion` is respected. The dark theme is kept for now (see §5).
 
 ---
 
@@ -134,6 +145,10 @@ The three directions from the original character-select exploration (§4.1) all 
 
 - Does the lock badge need a "dismiss for this session" option so it doesn't feel intrusive on trusted, frequently visited sites?
 - Should the panel auto-expand (not just on click) for 🔴-rated sites the first time a user visits, given the target audience may not think to click a small icon?
+- Light vs dark theme: dark is kept for now, but a light theme may read better for elderly users. Test with the target audience.
+- Should `rating` get an explicit "unrated" value? Today, nothing-scoreable results fall back to `caution` + `confidence = insufficient` (§3).
+- Is community exclusion on "zero reports" permanent, or only a v1 rule (§7)? Revisit once there is report traffic.
+- Locki's art lacks the closed/half-open/open lock shapes §4.4 calls for. The rating chip icons carry the distinct-shape requirement for now.
 - ~~Family/caregiver notification hooks — future phase, not MVP.~~ Reframed in §6 as the flagship premium feature, not a deferred nice-to-have.
 
 ---

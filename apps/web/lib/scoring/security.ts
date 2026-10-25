@@ -111,6 +111,7 @@ export async function scoreSecurity(rawUrl: string): Promise<SecurityResult> {
         cookiesSecure: false,
         exposedPaths: [],
       },
+      unreachable: true,
       error: err instanceof Error ? err.message : "site unreachable",
     };
   }

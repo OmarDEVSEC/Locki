@@ -1,0 +1,10 @@
+{
+  "description": "Protects elderly and non-technical users from scams by analyzing websites for risks and providing clear trust ratings through a browser extension and lookup site.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

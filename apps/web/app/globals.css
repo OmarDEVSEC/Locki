@@ -1,219 +1,322 @@
 @import "tailwindcss";
 
-@theme inline {
-  /* Base — black/white/grey, per the "black and white" brief. Color is
-     reserved entirely for the lightsaber-glow state signal below, so it
-     stays legible as *information* instead of decoration. */
-  --color-void:       #050608;
-  --color-void-deep:  #000000;
-  --color-panel:      #0D0F14;
-  --color-border:     #23262E;
-  --color-ink:        #F4F5F7;
-  --color-muted:      #9AA0AC;
+/* ==========================================================================
+   LOCKI DESIGN TOKENS — three layers
+   1. PRIMITIVE  raw values, no meaning          (--gray-900, --space-4)
+   2. SEMANTIC   purpose aliases, themeable      (--color-surface, --color-state-danger)
+   3. COMPONENT  per-component tokens            (--button-bg, --card-padding)
+   Components and TSX reference semantic/component tokens only, never raw values.
+   ========================================================================== */
 
-  /* Lightsaber glow states */
-  --color-jedi:        #38BDF8;
-  --color-jedi-glow:   #7DD3FC;
-  --color-jedi-soft:   #0B2430;
-  --color-caution:      #FBBF24;
-  --color-caution-glow: #FDE68A;
-  --color-caution-soft: #2B2007;
-  --color-sith:         #EF4444;
-  --color-sith-glow:    #FCA5A5;
-  --color-sith-soft:    #2A0B0B;
-  --color-dormant:      #6B7280;
-  --color-dormant-glow: #9CA3AF;
+/* ── 1. PRIMITIVES ───────────────────────────────────────────────────────── */
+:root {
+  /* Warm neutral ramp (light theme) */
+  --gray-0: #ffffff;
+  --gray-50: #faf7f2; /* page background: warm off-white */
+  --gray-100: #f1ece3;
+  --gray-200: #e4ddd0;
+  --gray-300: #b0a696; /* visible borders */
+  --gray-400: #8e8678;
+  --gray-500: #766f62; /* 4.9:1 on white: strong borders, input edges */
+  --gray-600: #5b5448; /* 7.3:1 on white: idle state */
+  --gray-700: #4a443c; /* ~9.5:1 on bg: muted text, AAA */
+  --gray-800: #2b2723;
+  --gray-900: #1c1917; /* ~16:1 on bg: body text, AAA */
 
-  --font-display: var(--font-orbitron);
-  --font-body:    var(--font-inter);
+  /* Status hues: -700/-800 for text and icons on light (AA+), -100 soft tints */
+  --blue-700: #0b62ad; /* 6:1 on white, 5.5:1 on blue-100 */
+  --blue-100: #e1f0fb;
+  --amber-800: #8a4b00; /* 6:1 on amber-100; amber needs this dark to pass */
+  --amber-100: #fdf0cf;
+  --red-700: #b42318; /* 6.5:1 on white, 5.5:1 on red-100 */
+  --red-100: #fde8e6;
+
+  /* Warm brown/cream (Locki's robe and face) */
+  --brown-400: #b5835a;
+  --brown-600: #8c5b36;
+  --brown-800: #6f4527;
+  --cream-100: #fbeed8;
+  --blush-300: #e9a58a;
+
+  /* Spacing (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* Type scale (body never below 1rem) */
+  --font-size-sm: 1rem;
+  --font-size-base: 1.125rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --font-size-3xl: 2.5rem;
+  --font-size-score: 4rem;
+  --line-height-tight: 1.2;
+  --line-height-body: 1.6;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* Radius */
+  --corner-sm: 0.5rem;
+  --corner-md: 0.75rem;
+  --corner-lg: 1.25rem;
+  --corner-full: 9999px;
+
+  /* Motion (within the 150-400ms principle) */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+
+  /* Sizing */
+  --size-tap: 3rem; /* 48px minimum touch target */
+  --size-focus-ring: 3px;
+  --size-focus-offset: 2px;
 }
 
+/* ── 2. SEMANTIC (exposed to Tailwind as utilities: bg-surface, text-fg …) ─ */
+@theme {
+  --color-*: initial; /* only semantic colors exist as utilities */
+
+  --color-bg: var(--gray-50);
+  --color-surface: var(--gray-0);
+  --color-surface-raised: var(--gray-100);
+  --color-border: var(--gray-300);
+  --color-border-strong: var(--gray-500);
+  --color-fg: var(--gray-900); /* ~16:1 on bg: AAA */
+  --color-fg-muted: var(--gray-700); /* ~9.5:1 on bg: AAA */
+  --color-fg-inverse: var(--gray-0);
+  --color-action: var(--gray-900);
+  --color-action-hover: var(--gray-700);
+  --color-focus: var(--blue-700);
+  --color-accent: var(--blue-700);
+
+  /* Rating states: always pair with an icon shape + text label */
+  --color-state-idle: var(--gray-600);
+  --color-state-idle-soft: var(--gray-100);
+  --color-state-trusted: var(--blue-700);
+  --color-state-trusted-soft: var(--blue-100);
+  --color-state-caution: var(--amber-800);
+  --color-state-caution-soft: var(--amber-100);
+  --color-state-danger: var(--red-700);
+  --color-state-danger-soft: var(--red-100);
+
+  /* Type */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --text-sm: var(--font-size-sm);
+  --text-sm--line-height: var(--line-height-body);
+  --text-base: var(--font-size-base);
+  --text-base--line-height: var(--line-height-body);
+  --text-lg: var(--font-size-lg);
+  --text-lg--line-height: 1.5;
+  --text-xl: var(--font-size-xl);
+  --text-xl--line-height: 1.3;
+  --text-2xl: var(--font-size-2xl);
+  --text-2xl--line-height: var(--line-height-tight);
+  --text-3xl: var(--font-size-3xl);
+  --text-3xl--line-height: var(--line-height-tight);
+
+  --radius-sm: var(--corner-sm);
+  --radius-md: var(--corner-md);
+  --radius-lg: var(--corner-lg);
+}
+
+/* Character art colors (semantic: figure parts) */
+:root {
+  color-scheme: light;
+
+  /* Light face with rating-colored eyes: eyes stay legible on every state */
+  --color-figure-robe: var(--brown-400);
+  --color-figure-robe-dark: var(--brown-800);
+  --color-figure-hood: var(--brown-600);
+  --color-figure-face: var(--cream-100);
+  --color-figure-blush: var(--blush-300);
+  --color-figure-core: var(--gray-0);
+  --color-figure-hilt: var(--gray-200);
+  --color-figure-outline: var(--gray-900);
+
+  /* Illustration palette: one stroke + three fills, shared by all scenes */
+  --ill-ink: var(--gray-900);
+  --ill-fill-a: var(--blue-100);
+  --ill-fill-b: var(--amber-100);
+  --ill-fill-c: var(--gray-100);
+}
+
+/* ── 3. COMPONENT TOKENS ─────────────────────────────────────────────────── */
+:root {
+  /* Button */
+  --button-height: var(--size-tap);
+  --button-padding-x: var(--space-5);
+  --button-radius: var(--radius-md);
+  --button-primary-bg: var(--color-action);
+  --button-primary-bg-hover: var(--color-action-hover);
+  --button-primary-fg: var(--color-fg-inverse);
+  --button-secondary-border: var(--color-border-strong);
+  --button-secondary-fg: var(--color-fg);
+  --button-secondary-bg-hover: var(--color-surface-raised);
+  --button-disabled-opacity: 0.5;
+
+  /* Input */
+  --input-height: 3.5rem;
+  --input-padding-x: var(--space-4);
+  --input-radius: var(--radius-md);
+  --input-bg: var(--color-surface);
+  --input-border: var(--color-border-strong);
+  --input-fg: var(--color-fg);
+  --input-placeholder: var(--color-fg-muted);
+
+  /* Card */
+  --card-bg: var(--color-surface);
+  --card-border: var(--color-border);
+  --card-radius: var(--radius-lg);
+  --card-padding: var(--space-5);
+
+  /* Rating (set per state via [data-state]) */
+  --rating-color: var(--color-state-idle);
+  --rating-bg: var(--color-state-idle-soft);
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 var(--size-focus-offset) var(--color-bg),
+    0 0 0 calc(var(--size-focus-offset) + var(--size-focus-ring)) var(--color-focus);
+}
+
+[data-state="idle"] { --rating-color: var(--color-state-idle); --rating-bg: var(--color-state-idle-soft); }
+[data-state="trustworthy"] { --rating-color: var(--color-state-trusted); --rating-bg: var(--color-state-trusted-soft); }
+[data-state="caution"] { --rating-color: var(--color-state-caution); --rating-bg: var(--color-state-caution-soft); }
+[data-state="high_risk"] { --rating-color: var(--color-state-danger); --rating-bg: var(--color-state-danger-soft); }
+
+/* ==========================================================================
+   BASE + COMPONENT CLASSES
+   ========================================================================== */
 body {
-  background: var(--color-void);
-  color: var(--color-ink);
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-body);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Starfield ──────────────────────────────────────────────
-   Pure CSS, tiled radial-gradient dots — cheap atmosphere behind
-   the content, kept faint enough not to compete with it. */
-.starfield {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(1.6px 1.6px at 12% 18%, rgba(255,255,255,0.9), transparent),
-    radial-gradient(1.2px 1.2px at 28% 64%, rgba(255,255,255,0.7), transparent),
-    radial-gradient(1.8px 1.8px at 46% 12%, rgba(255,255,255,0.85), transparent),
-    radial-gradient(1.1px 1.1px at 62% 78%, rgba(255,255,255,0.6), transparent),
-    radial-gradient(1.5px 1.5px at 74% 34%, rgba(255,255,255,0.8), transparent),
-    radial-gradient(1.2px 1.2px at 85% 58%, rgba(255,255,255,0.65), transparent),
-    radial-gradient(1.4px 1.4px at 93% 22%, rgba(255,255,255,0.75), transparent),
-    radial-gradient(1.1px 1.1px at 8% 85%, rgba(255,255,255,0.55), transparent),
-    radial-gradient(1.3px 1.3px at 38% 92%, rgba(255,255,255,0.6), transparent),
-    radial-gradient(1.2px 1.2px at 55% 48%, rgba(255,255,255,0.5), transparent);
-  background-repeat: repeat;
-  background-size: 340px 340px;
-  opacity: 0.55;
-}
-
-/* ── URL input focus ───────────────────────────────────────── */
-.url-input:focus {
+:focus-visible {
   outline: none;
-  border-color: var(--color-jedi) !important;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22), 0 0 18px rgba(56, 189, 248, 0.18);
+  box-shadow: var(--focus-ring);
 }
 
-/* ── Glow utilities ─────────────────────────────────────────── */
-.glow-text-jedi    { text-shadow: 0 0 14px rgba(56, 189, 248, 0.55); }
-.glow-text-caution { text-shadow: 0 0 14px rgba(251, 191, 36, 0.5); }
-.glow-text-sith     { text-shadow: 0 0 14px rgba(239, 68, 68, 0.55); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--button-height);
+  padding: 0 var(--button-padding-x);
+  border: 2px solid transparent;
+  border-radius: var(--button-radius);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) ease-in-out,
+    border-color var(--duration-fast) ease-in-out;
+}
+.btn:disabled { opacity: var(--button-disabled-opacity); cursor: not-allowed; }
+.btn-primary { background: var(--button-primary-bg); color: var(--button-primary-fg); }
+.btn-primary:hover:not(:disabled) { background: var(--button-primary-bg-hover); }
+.btn-secondary { border-color: var(--button-secondary-border); color: var(--button-secondary-fg); }
+.btn-secondary:hover:not(:disabled) { background: var(--button-secondary-bg-hover); }
 
-@keyframes lock-snap-in {
-  0% { transform: scale(0); }
-  60% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+.input {
+  width: 100%;
+  min-height: var(--input-height);
+  padding: 0 var(--input-padding-x);
+  border: 2px solid var(--input-border);
+  border-radius: var(--input-radius);
+  background: var(--input-bg);
+  color: var(--input-fg);
+  font-size: var(--font-size-base);
+}
+.input::placeholder { color: var(--input-placeholder); }
+.input:disabled { opacity: var(--button-disabled-opacity); }
+
+.card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: var(--card-radius);
+}
+.card-rated { border-color: var(--rating-color); }
+
+.rating-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--corner-full);
+  background: var(--rating-bg);
+  color: var(--rating-color);
+  border: 2px solid var(--rating-color);
+  font-weight: var(--font-weight-bold);
 }
 
-@keyframes panel-slide-fade {
-  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+/* Illustrations: one stroke weight, rounded joins, three fills */
+.ill {
+  fill: none;
+  stroke: var(--ill-ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ill .fa { fill: var(--ill-fill-a); }
+.ill .fb { fill: var(--ill-fill-b); }
+.ill .fc { fill: var(--ill-fill-c); }
+
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--corner-full);
+  background: var(--color-action);
+  color: var(--color-fg-inverse);
+  font-weight: var(--font-weight-bold);
 }
 
+/* Checklist row: icon shape + color + text (color is never the only signal) */
+.finding {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.finding-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding-top: var(--space-1);
+  color: var(--rating-color);
+}
+
+/* ==========================================================================
+   MOTION (one-shot only; no loops; nothing under 150ms or over 400ms)
+   ========================================================================== */
 @keyframes result-reveal {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(var(--space-3)); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
-@keyframes scan-dot {
-  0%, 100% { opacity: 0.3; transform: scale(0.75); }
-  50%       { opacity: 1;   transform: scale(1.2); }
-}
-
-@keyframes face-blink {
-  0% { transform: scaleY(0.1); }
-  60% { transform: scaleY(1.15); }
-  100% { transform: scaleY(1); }
-}
-
-@keyframes blink-loop {
-  0%, 94%, 100% { transform: scaleY(1); }
-  97% { transform: scaleY(0.08); }
-}
-
 @keyframes blade-ignite {
-  0% { opacity: 0; transform: scaleY(0.2); }
-  60% { opacity: 1; transform: scaleY(1.08); }
-  100% { opacity: 1; transform: scaleY(1); }
-}
-
-/* One-shot reactions, played once per scan since the badge/panel remount
-   on every new result (keyed in page.tsx) — not a perpetual idle loop,
-   which would fight the "no distracting ambient motion" rule below. */
-@keyframes lock-hop {
-  0% { transform: translateY(0) scale(1, 1); }
-  30% { transform: translateY(-10px) scale(1.05, 0.95); }
-  55% { transform: translateY(1px) scale(0.97, 1.04); }
-  75% { transform: translateY(-4px) scale(1.01, 0.99); }
-  100% { transform: translateY(0) scale(1, 1); }
-}
-@keyframes lock-shimmy {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-5deg); }
-  50% { transform: rotate(4deg); }
-  75% { transform: rotate(-3deg); }
-}
-@keyframes lock-flinch {
-  0% { transform: translateX(0) scale(1); }
-  30% { transform: translateX(-3px) scale(0.95, 1.03); }
-  60% { transform: translateX(2px) scale(0.98, 1.01); }
-  100% { transform: translateX(0) scale(1); }
-}
-
-@keyframes socki-spin { 0% { transform: rotate(0) scale(1); } 40% { transform: rotate(200deg) scale(1.05); } 100% { transform: rotate(360deg) scale(1); } }
-@keyframes socki-tilt { 0% { transform: rotate(0); } 60% { transform: rotate(9deg); } 100% { transform: rotate(6deg); } }
-@keyframes socki-step { 0% { transform: translateX(0); } 30% { transform: translateX(-8px); } 100% { transform: translateX(0); } }
-
-@keyframes pocki-bounce {
-  0% { transform: translateY(0) scale(1, 1); }
-  35% { transform: translateY(-14px) scale(1.08, 0.92); }
-  65% { transform: translateY(0) scale(0.94, 1.07); }
-  100% { transform: translateY(0) scale(1, 1); }
-}
-@keyframes pocki-wobble {
-  0%, 100% { transform: rotate(0deg); }
-  20% { transform: rotate(-9deg); }
-  45% { transform: rotate(7deg); }
-  70% { transform: rotate(-4deg); }
-  90% { transform: rotate(2deg); }
-}
-@keyframes pocki-gasp {
-  0% { transform: translateY(0) scale(1, 1); }
-  40% { transform: translateY(-12px) scale(0.92, 1.12); }
-  70% { transform: translateY(0) scale(1.06, 0.92); }
-  100% { transform: translateY(0) scale(1, 1); }
+  from { opacity: 0; transform: scaleY(0.2); }
+  to { opacity: 1; transform: scaleY(1); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .lock-badge-enter {
-    animation: lock-snap-in 300ms ease-out;
-  }
-  .rating-panel-enter {
-    animation: panel-slide-fade 250ms ease-out;
-  }
-  .result-card-enter {
-    animation: result-reveal 450ms ease-out both;
-  }
-  .scan-dot {
-    animation: scan-dot 1.1s ease-in-out infinite;
-  }
-  .lock-eyes {
-    animation:
-      face-blink 200ms ease-out 200ms both,
-      blink-loop 4.6s ease-in-out 1000ms infinite;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
+  .result-card-enter { animation: result-reveal var(--duration-slow) ease-out both; }
   .lock-blade {
-    animation: blade-ignite 260ms ease-out 260ms both;
+    animation: blade-ignite var(--duration-normal) ease-out both;
     transform-box: fill-box;
     transform-origin: bottom center;
   }
-
-  .char-locki[data-reaction="safe"] { animation: lock-hop 650ms cubic-bezier(.34,1.56,.64,1) 500ms both; }
-  .char-locki[data-reaction="caution"] { animation: lock-shimmy 500ms ease-in-out 500ms both; }
-  .char-locki[data-reaction="risk"] { animation: lock-flinch 500ms ease-out 500ms both; }
-
-  .char-socki[data-reaction="safe"] { animation: socki-spin 550ms ease-in-out 500ms both; transform-box: fill-box; transform-origin: center; }
-  .char-socki[data-reaction="caution"] { animation: socki-tilt 500ms ease-out 500ms both; transform-box: fill-box; transform-origin: center; }
-  .char-socki[data-reaction="risk"] { animation: socki-step 450ms ease-out 500ms both; }
-
-  .char-pocki[data-reaction="safe"] { animation: pocki-bounce 650ms cubic-bezier(.34,1.56,.64,1) 500ms both; }
-  .char-pocki[data-reaction="caution"] { animation: pocki-wobble 700ms ease-in-out 500ms both; }
-  .char-pocki[data-reaction="risk"] { animation: pocki-gasp 550ms ease-out 500ms both; }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .lock-badge-enter,
-  .rating-panel-enter,
-  .result-card-enter,
-  .scan-dot,
-  .lock-eyes,
-  .lock-blade,
-  .lock-figure {
-    animation: none !important;
-  }
+  .btn { transition: none; }
 }
-
-.char-socki .brow {
-  transition: transform 250ms ease;
-  transform-box: fill-box;
-}
-.char-socki .brow-l { transform-origin: 100% 100%; }
-.char-socki .brow-r { transform-origin: 0% 100%; }
-.char-socki[data-reaction="caution"] .brow-l { transform: rotate(-14deg) translateY(-2px); }
-.char-socki[data-reaction="risk"] .brow-l { transform: rotate(-22deg) translateY(-4px); }
-.char-socki[data-reaction="risk"] .brow-r { transform: rotate(22deg) translateY(-4px); }
-.char-socki[data-reaction="caution"] .brow-r { transform: rotate(14deg) translateY(-2px); }

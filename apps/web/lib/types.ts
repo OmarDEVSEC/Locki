@@ -20,6 +20,8 @@ export interface SecurityResult {
   score: number;
   signals: SecuritySignals;
   error?: string;
+  /** True when the site could not be fetched; score is then meaningless (0) and excluded from the blend. */
+  unreachable?: boolean;
 }
 
 export type TosSeverity = "minor" | "moderate" | "major";
@@ -73,4 +75,8 @@ export interface ScanResult {
   overall: number;
   rating: Rating;
   overrideApplied: boolean;
+  /** How much of the blend is backed by real data. Absent on old cached results. */
+  confidence?: "full" | "partial" | "insufficient";
+  /** Sub-scores left out of the blend: any of "security", "tos", "community". */
+  excluded?: Array<"security" | "tos" | "community">;
 }
